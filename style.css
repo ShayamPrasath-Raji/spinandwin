@@ -1,0 +1,114 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 95vh;
+    background: #f0f0f0;
+    font-family: sans-serif;
+}
+
+.body-content{
+    display: flex;
+    width: 50%;
+    /* justify-content: space-between; */
+}
+
+.container1, .container2{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+}
+
+.color-div{
+    display: flex;
+    padding-top: 10px;
+    padding-bottom: 22px;
+}
+
+.color-text{
+    padding-left: 15px;
+}
+
+.color{
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    border: 1px #000 solid;
+}
+  
+.wheel-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+}
+  
+.wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 5px solid #444;
+    background: conic-gradient(
+      #ff6666 0deg 60deg,
+      #66b3ff 60deg 120deg,
+      #99ff99 120deg 180deg,
+      #ffff66 180deg 240deg,
+      #ffb3e6 240deg 300deg,
+      #ffa64d 300deg 360deg
+    );
+    position: relative;
+    transition: transform 4s ease-out;
+}
+  
+.label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: 0 0;
+    transform: rotate(calc(60deg * var(--i))) translate(50px) rotate(calc(-60deg * var(--i)));
+    font-weight: bold;
+    font-size: 14px;
+}
+  
+.pointer {
+    position: absolute;
+    top: 39%;
+    left: 52%;
+    rotate: 0deg;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 20px solid red;
+}
+
+.spin-btn {
+    position: absolute;
+    top: 51%;
+    left: 52%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    /* padding: 10px 20px; */
+    background-color: green;
+    color: white;
+    border: 2px solid #000;
+    border-radius: 50%;
+    font-size: 12px;
+    height: 50px;
+    width: 50px;
+    cursor: pointer;
+}
+
+.swal-modal{
+    width: 25% !important;
+}
+
+.swal-text:first-child{
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+}
+
+.swal-footer{
+    display: none !important;
+}

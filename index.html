@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Form</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    </head>
+    <script>
+        let currentRotation = 0;
+        const SPIN_DELAY_HOURS = 24;
+        //const SPIN_DELAY_SECONDS = 10;
+
+        window.onload = () => {
+            checkSpinStatus();
+        };
+
+        function checkSpinStatus() {
+            const now = new Date().getTime();
+            const endTime = sessionStorage.getItem("spinEndTime");
+            const hasSpunBefore = sessionStorage.getItem("hasSpunBefore");
+            const spinBtn = document.querySelector(".spin-btn");
+            const countdownEl = document.getElementById("timer");
+
+            if (!hasSpunBefore) {
+                // First visit or reset - allow free spin
+                spinBtn.disabled = false;
+                countdownEl.innerText = "🎉 You have 1 free spin!";
+            } else if (now > parseInt(endTime)) {
+                // Timer expired - allow spin
+                spinBtn.disabled = false;
+                countdownEl.innerText = "🎉 You can spin now!";
+            } else {
+                // Timer still running
+                spinBtn.disabled = true;
+                startCountdown(parseInt(endTime));
+            }
+        }
+
+        function startCountdown(endTime) {
+            const countdownEl = document.getElementById("timer");
+
+            const timerInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = endTime - now;
+
+                if (distance <= 0) {
+                    clearInterval(timerInterval);
+                    countdownEl.innerText = "🎉 You can spin now!";
+                    document.querySelector(".spin-btn").disabled = false;
+                    return;
+                }
+
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                countdownEl.innerText = `⏳ You can spin again in: ${hours}h ${minutes}m ${seconds}s`;
+            }, 1000);
+        }
+
+        function spinWheel() {
+            const button = document.querySelector(".spin-btn");
+            const wheel = document.getElementById("wheel");
+            const spinSound = document.getElementById("spinaudio");
+
+            button.disabled = true;
+
+            const spinAmount = Math.floor(360 * 10 + Math.random() * 360);
+            currentRotation += spinAmount;
+            const actualDegree = currentRotation % 360;
+
+            wheel.style.transition = "transform 4s ease-out";
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+            // 🔊 Play the sound
+            spinSound.currentTime = 21;
+            spinSound.loop = true;
+            spinSound.play();
+
+            setTimeout(() => {
+                // ⏹️ Stop sound after spin
+                spinSound.pause();
+                spinSound.currentTime = 21;
+
+                const pointerOffset = 30; // Adjust this based on pointer angle (center of each 60deg slice)
+                const prizeIndex = Math.floor(((360 - actualDegree + pointerOffset) % 360) / 60);
+
+                const prizes = ["Nail Polish 💅", "Bajji 🌶", "Mehandhi 🤲", "Jimikki 💎", "Egg Puffs 🥚", "Eye Liner ✏"];
+
+                swal("🎉 You won: " + prizes[prizeIndex]).then(() => {
+                    // Set 24hr timer
+                    const newEndTime = new Date().getTime() + SPIN_DELAY_HOURS * 60 * 60 * 1000;
+                    //const newEndTime = new Date().getTime() + SPIN_DELAY_SECONDS * 1000;
+                    sessionStorage.setItem("spinEndTime", newEndTime);
+                    sessionStorage.setItem("hasSpunBefore", "true");
+                    checkSpinStatus();
+                });
+            }, 4000);
+        }
+    </script>
+    <body>
+        <audio id="spinaudio" src="./assets/soundtrack/spin.mp3" preload="auto"></audio>
+        <h2 id="timer" style="text-align: center; margin-top: 20px;"></h2>
+
+        <div class="body-content">
+            <div class="container1">
+                <div class="wheel-container">
+                    <div class="wheel" id="wheel">
+                        <div class="label" style="--i: 0;"></div>
+                        <div class="label" style="--i: 1;"></div>
+                        <div class="label" style="--i: 2;"></div>
+                        <div class="label" style="--i: 3;"></div>
+                        <div class="label" style="--i: 4;"></div>
+                        <div class="label" style="--i: 5;"></div>
+                    </div>
+                    <div class="pointer"></div>
+                    <button class="spin-btn" onclick="spinWheel()">Spin</button>
+                </div>
+            </div>
+
+            <div class="container2">
+                <div class="color-details">
+                    <div class="color-div">
+                        <div class="color" style="background-color: #ff6666;"></div>
+                        <span class="color-text">Nail Polish 💅</span>
+                    </div>
+                    <div class="color-div">
+                        <div class="color" style="background-color: #ffa64d;"></div>
+                        <span class="color-text">Bajji 🌶</span>
+                    </div>
+                    <div class="color-div">
+                        <div class="color" style="background-color: #66b3ff;"></div>
+                        <span class="color-text">Mehandhi 🤲</span>
+                    </div>
+                    <div class="color-div">
+                        <div class="color" style="background-color: #99ff99;"></div>
+                        <span class="color-text">Jimikki 💎</span>
+                    </div>
+                    <div class="color-div">
+                        <div class="color" style="background-color: #ffb3e6;"></div>
+                        <span class="color-text">Egg Puffs 🥚</span>
+                    </div>
+                    <div class="color-div">
+                        <div class="color" style="background-color: #ffff66;"></div>
+                        <span class="color-text">Eye Liner ✏</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
